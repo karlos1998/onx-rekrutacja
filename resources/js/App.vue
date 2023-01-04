@@ -1,17 +1,23 @@
 <template>
     <router-view />
+
+    <Toast />
+
 </template>
 
 <script>
 
-import { useUserStore } from '@/stores/user'
+import Toast from 'primevue/toast';
 
 export default {
 
-    async beforeMount() {
-        console.log('beforeMount - App.vue')
-        const user = useUserStore()
-        await user.init()
+    components: {
+        Toast,
+    },
+
+    beforeMount() {
+        
     }
 }
 </script>
+

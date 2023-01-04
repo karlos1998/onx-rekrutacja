@@ -6,7 +6,7 @@
 
                 <Card style="margin-bottom: 2em">
                     <template #title>
-                        
+                        <div>Login Form</div>
                     </template>
 
                     <template #content>        
@@ -41,12 +41,26 @@
         </div>
     </div>
 
+
+    <div class="card">
+        <div class="flex flex-wrap align-items-center justify-content-center card-container yellow-container">
+            <div class="w-28rem">
+                <Card style="margin-bottom: 2em">
+                    <template #content>
+                        <div class="text-600 font-medium line-height-3">You don't have an account?</div>
+                        <router-link class="font-medium no-underline ml-2 text-blue-500 cursor-pointer"  :to="{name: 'signup'}">Create now!</router-link>
+                    </template>
+                </Card>
+            </div>
+        </div>
+    </div>
+
 </template>
     
     
     
     
-    <script>
+<script>
     
     import Steps from 'primevue/steps';
     
@@ -59,6 +73,8 @@
     import Button from 'primevue/button';
 
     import Password from 'primevue/password';
+
+    import { useUserStore } from '@/stores/user'
 
     export default {
         components: {
@@ -84,13 +100,24 @@
 
                 await axios.get('/sanctum/csrf-cookie')
 
-                api
+                await api
                 .post("/login", this.inputs)
-                .then((response) => {
-                    console.log(response) 
+                .then(async (response) => {
+                    console.log('/login response ->', response) 
+
+                    const user = useUserStore()
+                    await user.init()
+                    if(user.logged) {
+                        this.$router.push({ name: 'dashboard' });
+                        this.$toast.add({severity:'success', summary:'Hello', detail: 'Dear, ' + user.data.firstname + ' ' + user.data.lastname + ' you are now logged in.', life: 3000});
+                        console.log('after router push... to dashboard :D')
+                    } else {
+                        this.$toast.add({severity:'error', summary:'Login Fail', detail: 'Something went wrong...', life: 3000});
+                    }
                 })
                 .catch((err) => {
                     console.warn(err.response.data.message)
+                    this.$toast.add({severity:'error', summary:'Login Fail', detail: err.response.data.message, life: 3000});
                 })
                 .finally(() => {
                     this.processing = false

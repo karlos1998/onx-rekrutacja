@@ -1,4 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {
+	createRouter,
+	createWebHistory
+} from 'vue-router'
 const routerHistory = createWebHistory()
 
 import Signup from './pages/Signup.vue'
@@ -13,92 +16,104 @@ import SignupConfirmation from './partials/Signup/Confirmation.vue'
 import Table from './pages/Table.vue'
 
 const router = createRouter({
-  history: routerHistory,
-  routes: [
-    {
-        path: '/table',
-        component: Table,
-        name:'dashboard',
-        meta:{
-            middleware:"auth",
-            title:`Default page :)`
-        }
-    },
-    {
-      path: '/signup/',
-      component: Signup,
-      name:'sigup',
-      meta:{
-          middleware:"guest",
-          title:`Register`
-      },
-      children: [
-        {
-          path: '/signup/',
-          //name: 'personal',
-          component: SignupPersonal,
-         },
-        {
-            path: '/signup/email',
-            component: SignupEmail,
-        },
-        {
-            path: '/signup/password',
-            component: SignupPassword,
-        },
-        {
-          path: '/signup/confirmation',
-          component: SignupConfirmation,
-        },
-        //  {
-        //    path: 'management',
-        //    name: 'ComponentB',
-        //    component: ComponentB
-        //  }
-      ]
-    },
-    {
-      path: '/signin',
-      component: Signin,
-      name:'signin',
-      meta:{
-          middleware:"auth",
-          title:`Sigin`
-      }
-  },
-    
-    // {
-    //   path: '/signup',
-    //   component: Signup,
-    //   name: 'signup',
-    //   meta:{
-    //       middleware:"guest",
-    //       title:`Register`
-    //   }
-    // },
-]
+	history: routerHistory,
+	routes: [{
+			path: '/',
+			component: Table,
+			name: 'dashboard',
+			meta: {
+				middleware: "auth",
+				title: `Default page :)`
+			}
+		},
+		{
+			path: '/signup',
+			component: Signup,
+			meta: {
+				middleware: "guest",
+				title: `Register`
+			},
+			children: [{
+					path: '/signup',
+					name: 'signup',
+					component: SignupPersonal,
+				},
+				{
+					path: '/signup/email',
+					component: SignupEmail,
+				},
+				{
+					path: '/signup/password',
+					component: SignupPassword,
+				},
+				{
+					path: '/signup/confirmation',
+					component: SignupConfirmation,
+				}
+			]
+		},
+		{
+			path: '/signin',
+			component: Signin,
+			name: 'signin',
+			meta: {
+				middleware: "guest",
+				title: `Sigin`
+			}
+		},
+
+		// {
+		//   path: '/signup',
+		//   component: Signup,
+		//   name: 'signup',
+		//   meta:{
+		//       middleware:"guest",
+		//       title:`Register`
+		//   }
+		// },
+	]
 });
 
 
-router.beforeEach((to, from, next) => {
-  document.title = `Page: ${to.meta.title}`
+import {
+	useUserStore
+} from '@/stores/user'
 
-  // console.log('before each', to.meta.middleware, store.state.auth.authenticated)
-  // if(to.meta.middleware=="guest"){
-  //     if(store.state.auth.authenticated){
-  //         next({name:"dashboard"})
-  //     }
-  //     next()
-  // }else{
-  //     if(store.state.auth.authenticated){
-  //       socket.tryToLaunch()
-  //       next()
-  //     }else{
-  //         next({name:"signin"})
-  //     }
-  // }
-  console.log('beforeEach', to)
-  next()
+
+router.beforeEach(async (to, from, next) => {
+
+	const user = useUserStore()
+	if(!user.initiated) {
+    await user.init()
+    if(user.logged) {
+      //HELLO AGAIN
+    }
+  }
+
+	console.log('user logged', user.logged, user.data)
+
+
+
+	document.title = `Page: ${to.meta.title}`
+
+	console.log('before each', to.meta.middleware, to.meta.middleware == "guest")
+
+	if (to.meta.middleware == "guest") {
+    /* when the user enters the login or registration page  */
+    console.log('guest page...')
+		if (user.logged) {
+			next({name: "dashboard"})
+		} else {
+		  next()
+    }
+	} else {
+		if (user.logged) {
+			next()
+		} else {
+			next({name: "signin"})
+		}
+	}
+
 })
 
 export default router;

@@ -53,6 +53,8 @@ import { useSignupStore } from '@/stores/signup'
 
 import ProgressBar from 'primevue/progressbar';
 
+import { useUserStore } from '@/stores/user'
+
 export default {
     name: 'Pass',
 
@@ -98,10 +100,19 @@ export default {
 
             api
             .post("/user", this.signupStore.inputs)
-            .then((response) => {
+            .then(async (response) => {
                 console.log(response) 
                 this.signupStore.inputs = {}
-                this.$emit('complete', this.signupStore.inputs);
+
+                const user = useUserStore()
+                await user.init()
+                if(user.logged) {
+                    this.$router.push({ name: 'dashboard' });
+                } else {
+                    this.createError = 'Something went wrong...'
+                }
+                
+                this.$emit('complete', user.data);
             })
             .catch((err) => {
                 console.warn(err.response.data.message)

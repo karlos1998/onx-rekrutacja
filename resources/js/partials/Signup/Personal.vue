@@ -3,8 +3,6 @@
     <Card style="margin-bottom: 2em">
         <template #title>
             <div class="text-900 text-3xl font-medium mb-3">Create account</div>
-            <span class="text-600 font-medium line-height-3">You have account?</span>
-            <a class="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Login now!</a>
         </template>
 
         <template #content>
