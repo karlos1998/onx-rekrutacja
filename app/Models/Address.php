@@ -24,4 +24,10 @@ class Address extends Model
         'uuid',
         'zip'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

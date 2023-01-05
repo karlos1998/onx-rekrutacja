@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Address;
+use App\Http\Resources\AddressResource;
+
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AddressController extends Controller
 {
@@ -37,12 +40,32 @@ class AddressController extends Controller
 
         $model->user_id = $request->user()->id;
 
-        return $model->save();
+        if($model->save())
+        {
+            return new AddressResource($model);
+        }
+        else
+        {
+            throw new HttpException(403, "Error");
+        }
     }
 
     public function index(Request $request)
     {
-        //all-addresses-read
-        //if($this->hasPermission)       
+
+        if($request->user()->hasPermission('all-addresses-read'))
+        {
+            $addresses = Address::all();
+        }
+        else if($request->user()->hasPermission('own-addresses-read'))
+        {
+            $addresses = $request->user()->addresses;
+        }
+        else
+        {
+            throw new HttpException(403, "You are not authorized to read any addresses");
+        }
+
+        return AddressResource::collection($addresses);
     }
 }

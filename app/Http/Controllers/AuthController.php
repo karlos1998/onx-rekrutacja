@@ -49,6 +49,8 @@ class AuthController extends Controller
             'email'     => $post_data['email'],
             'password'  => Hash::make($post_data['password']),
         ]);
+
+        $user->attachRole('user');
         
         event(new Registered($user));
         
@@ -69,7 +71,7 @@ class AuthController extends Controller
         $user = User::where('email', $request['email'])->firstOrFail();
         
         $token = $user->createToken('authToken')->plainTextToken;
-    
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
