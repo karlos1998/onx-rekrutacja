@@ -87,7 +87,7 @@ export default {
         async complete(formObject) {
             console.log('registration complete...', formObject)
             
-            this.$toast.add({severity:'success', summary:'Account created', detail: 'Dear, ' + formObject.firstname + ' ' + formObject.lastname + ' your account created.'});
+            this.$toast.add({severity:'success', summary:'Account created', detail: 'Dear, ' + formObject.firstname + ' ' + formObject.lastname + ' your account created.', life: 3000});
         }
     }
 }

@@ -13,6 +13,11 @@ use Illuminate\Auth\Events\Registered;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+use Laravel\Sanctum\PersonalAccessToken;
+
+
+use App\Http\Resources\UserResource;
+
 class AuthController extends Controller
 {
 
@@ -72,7 +77,13 @@ class AuthController extends Controller
         
     }
 
-    public function logout() {
-        return Auth::logout();
+    public function logout(Request $request) {
+        
+        var_dump($request->user()->currentAccessToken('authToken'));
+        //return $request->bearerToken();
+    }
+
+    public function index(Request $request) {
+        return new UserResource($request->user());
     }
 }

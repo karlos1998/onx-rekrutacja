@@ -24,6 +24,8 @@ import Button from 'primevue/button';
 
 import newAddressDialog from './newAddressDialog.vue'
 
+import { useUserStore } from '@/stores/user'
+
 export default {
     components:{
         Menubar,
@@ -35,50 +37,45 @@ export default {
     data() {
         return {
             
+            user: useUserStore(),
+
             showAddressDialog:false,
 
-            items: [
-                {
-                    label:'File',
-                    icon:'pi pi-fw pi-file',
-                    items:[
-                        {
-                            label:'New',
-                            icon:'pi pi-fw pi-plus',
-                            command: () => {
-                                this.showAddressDialog = true
-                            },
-                            // items:[
-                            //     {
-                            //         label:'Bookmark',
-                            //         icon:'pi pi-fw pi-bookmark'
-                            //     },
-                            //     {
-                            //         label:'Video',
-                            //         icon:'pi pi-fw pi-video'
-                            //     }
-                            // ]
-                        },
-                        // {
-                        //     label:'Delete',
-                        //     icon:'pi pi-fw pi-trash'
-                        // },
-                        // {
-                        //     separator:true
-                        // },
-                        // {
-                        //     label:'Export',
-                        //     icon:'pi pi-fw pi-external-link'
-                        // }
-                    ]
-                },
-                {
-                    label:'Logout',
-                    icon:'pi pi-fw pi-power-off'
-                }
-            ]
+            items: []
         }
     },
+
+    beforeMount() {
+        this.items = [
+            {
+                label:'New address',
+                icon:'pi pi-fw pi-plus',
+                command: () => {
+                    this.showAddressDialog = true
+                },
+            },
+            {
+                label: this.user.data.firstname + ' ' + this.user.data.lastname,
+                icon:'pi pi-fw pi-user',
+                items:[
+                    {
+                        label:'Logout',
+                        icon:'pi pi-fw pi-power-off',
+                        command: () => {
+                            this.user.logout((success) => {
+                                if(success) {
+                                    this.$toast.add({severity:'info', summary:'Logout', detail: 'See you', life: 3000});
+                                    this.$router.push({ name: 'signin' });
+                                } else {
+                                    this.$toast.add({severity:'error', summary:'Logout', detail: 'Logout failed', life: 3000});
+                                }
+                            })
+                        },
+                    },
+                ]
+            }
+        ]
+    }
     
 }
 </script>

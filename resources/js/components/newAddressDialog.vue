@@ -26,7 +26,8 @@
         <template  v-if="addressIsSelected" #footer>
             <Button label="Cancel" icon="pi pi-times" @click="show = false" class="p-button-text"/>
             <Button label="Find Again" icon="pi pi-check" @click="selected = null" class="p-button-text" />
-            <Button label="Submit" icon="pi pi-check" @click="show = false" autofocus />
+            <Button label="Submit" :icon="processing ? 'pi pi-spinner pi-spin':'pi pi-angle-right'"  @click="add" autofocus />
+            <small v-show="addErrror" class="p-error">{{ addErrror }}</small>
         </template>
         <template v-else #footer>
             <Button label="Cancel" icon="pi pi-times" @click="show = false" class="p-button-text"/>
@@ -54,10 +55,10 @@ export default {
     data() {
         return {
             isVisible: false,
-
             selected: null,
-
             filtered: [],
+            addErrror: '',
+            processing: false,
 
         }
     },
@@ -111,6 +112,33 @@ export default {
                 }
                 
             }, 250);
+        },
+
+        add() {
+            this.addErrror = ''
+
+            if(this.processing) return
+
+            this.processing = true
+
+            if(!this.selected || !this.selected.city) {
+                this.addErrror = "Something went wrong"
+                return console.warn('Add address: is not object')
+            }
+
+            api
+            .post('/address', this.selected)
+            .then((response) => {
+                console.log(response.data)
+                
+                //TODO . dodac to do tabelki.
+                this.$emit('visibleChanges', false)
+                this.selected = false
+            })
+            .catch((err) => console.log(err))
+            .finally(() => {
+                this.processing = false
+            })
         }
     }
 }

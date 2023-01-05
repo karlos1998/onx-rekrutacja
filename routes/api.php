@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +17,6 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::get('/emailAvailable', [AuthController::class, 'emailAvailable']);
 
 /** Registration */
@@ -27,3 +24,15 @@ Route::post('/user', [AuthController::class, 'createAccount']);
 
 /* Login */
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    
+    /** Get info about me */
+    Route::get('/user', [AuthController::class, 'index']);
+    
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+
+    Route::post('/address', [AddressController::class, 'store'])->middleware(['permission:all-addresses-create|own-addresses-create']);
+    Route::get('/addresses', [AddressController::class, 'index'])->middleware(['permission:all-addresses-read|own-addresses-read']);
+});
