@@ -4,10 +4,10 @@
             dataKey="id" :rowHover="true" v-model:selection="selectedCustomers" v-model:filters="filters" filterDisplay="menu" :loading="addressesStore.loading"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            :globalFilterFields="['name','country.name','representative.name','status']" responsiveLayout="scroll">
+            :globalFilterFields="['name','zip', 'user.email']" responsiveLayout="scroll">
             <template #header>
                 <div class="flex justify-content-center align-items-center">
-                    <h5 class="m-0">Customers</h5>
+                    <h5 class="m-0">Address book </h5>
                     <span class="p-input-icon-left">
                         <i class="pi pi-search" />
                         <InputText v-model="filters['global'].value" placeholder="Keyword Search" />
@@ -20,7 +20,9 @@
             <template #loading>
                 Loading customers data. Please wait.
             </template>
+
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
             <Column field="name" header="Name" sortable style="min-width: 14rem">
                 <template #body="{data}">
                     {{data.name}}
@@ -36,7 +38,7 @@
                 </template>
             </Column>
 
-            <Column field="location" header="Location" sortable style="min-width: 14rem">
+            <Column field="location" header="Location" style="min-width: 14rem">
                 <template #body="{data}">
                     <a target=_blank :href="'https://www.google.com/maps/search/?api=1&query='+data.location_latitude+','+data.location_longitude"><Button click="navigate" role="link" label="Location"></Button></a>
                 </template>
@@ -92,6 +94,8 @@ export default {
             filters: {
                 'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
                 'name': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                'zip': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+                'user': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
                 
             },
             loading: true,
@@ -102,8 +106,7 @@ export default {
     },
     mounted() {
         
-        this.addressesStore.init()
-        
+        this.addressesStore.init()        
     },
     methods: {
 
