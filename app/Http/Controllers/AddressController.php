@@ -86,4 +86,35 @@ class AddressController extends Controller
             throw new HttpException(403);
         }
     }
+
+    public function deleteMany(Request $request)
+    {
+        $post_data = $request->validate([
+            'ids.*' =>  'int',
+        ]);
+
+        $ids = $post_data['ids'];
+
+        if($request->user()->hasPermission('all-addresses-delete'))
+        {
+            $addresses = Address::whereIn('id', $ids);
+        }
+        else if($request->user()->hasPermission('own-addresses-delete'))
+        {
+            $addresses = $request->user()->whereIn('id', $ids);
+        }
+        else
+        {
+            throw new HttpException(403);
+        }
+        
+        if($addresses->delete())
+        {
+            return response(null, 204);
+        }
+        else
+        {
+            throw new HttpException(403);
+        }
+    }
 }

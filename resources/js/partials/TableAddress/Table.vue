@@ -163,7 +163,14 @@ export default {
         },
 
         deleteSelectedImmediately() {
-            
+            if(this.deleting) return
+
+            this.deleting = true
+
+            this.addressesStore.deleteSelectedImmediately((success) => {
+                this.deleting = false
+                if(!success) this.$toast.add({severity:'error', summary:'Error', detail: 'There was a problem deleting addresses'});
+            })
         },
 
         initDetails(data) {

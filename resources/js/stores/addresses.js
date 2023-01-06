@@ -43,5 +43,25 @@ export const useAddressesStore = defineStore('addresses', {
 			})
 		},
 
+		deleteSelectedImmediately(callback) {
+
+			const ids = this.selected.map(a => a.id)
+			api
+            .delete(`/addresses`, {
+				params: {
+					ids: ids
+				}
+			})
+            .then((data) => {
+				console.log(this.selected.length)
+				this.list = this.list.filter(item => !ids.includes(item.id));
+				this.selected = []
+				callback(true)
+            })
+			.catch(() => {
+				callback(false)
+			})
+		},
+
 	},
 })

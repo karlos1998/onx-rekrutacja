@@ -36,4 +36,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/address', [AddressController::class, 'store'])->middleware(['permission:all-addresses-create|own-addresses-create']);
     Route::get('/addresses', [AddressController::class, 'index'])->middleware(['permission:all-addresses-read|own-addresses-read']);
     Route::delete('/address/{address}', [AddressController::class, 'delete'])->middleware(['permission:all-addresses-delete|own-addresses-delete']);
+    Route::delete('/addresses', [AddressController::class, 'deleteMany'])->middleware(['permission:all-addresses-delete|own-addresses-delete']);
 });
