@@ -1,7 +1,7 @@
 <template>
     <div>
-        <DataTable :value="addressesStore.list" :paginator="true" class="p-datatable-customers" :rows="10"
-            dataKey="id" :rowHover="true" v-model:selection="selectedCustomers" v-model:filters="filters" filterDisplay="menu" :loading="addressesStore.loading"
+        <DataTable v-model:selection="addressesStore.selected" :value="addressesStore.list" :paginator="true" class="p-datatable-customers" :rows="10"
+            dataKey="id" :rowHover="true" v-model:filters="filters" filterDisplay="menu" :loading="addressesStore.loading"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             :globalFilterFields="['name','zip', 'user.email']" responsiveLayout="scroll">
@@ -21,7 +21,10 @@
                 Loading customers data. Please wait.
             </template>
 
+
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+
+            
 
             <Column field="name" header="Name" sortable style="min-width: 14rem">
                 <template #body="{data}">
@@ -54,6 +57,15 @@
             
         </DataTable>
 	</div>
+
+    <Button 
+    @click.stop="deleteSelected"
+    v-if="addressesStore.selected.length > 0" 
+    class="p-button-raised p-button-danger" >
+        <span v-if="deleting">Deleting ...</span>
+        <span v-else>Delete selected ({{ addressesStore.selected.length }})</span>
+    </Button>
+
 </template>
 
 
@@ -99,6 +111,9 @@ export default {
                 
             },
             loading: true,
+
+            selected: [],
+            deleting: false,
         }
     },
     created() {
@@ -109,7 +124,16 @@ export default {
         this.addressesStore.init()        
     },
     methods: {
+        deleteSelected() {
+            if(this.deleting) return
 
+            this.deleting = true
+
+            this.addressesStore.deleteSelected((success) => {
+                this.deleting = false
+                if(!success) this.$toast.add({severity:'error', summary:'Error', detail: 'There was a problem deleting addresses'});
+            })
+        },
     },
 
     computed: {

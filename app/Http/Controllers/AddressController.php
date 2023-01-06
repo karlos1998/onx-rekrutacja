@@ -68,4 +68,22 @@ class AddressController extends Controller
 
         return AddressResource::collection($addresses);
     }
+
+    public function delete(Request $request, Address $address)
+    {
+
+        if(!$request->user()->hasPermission('all-addresses-delete'))
+        {
+            $request->user()->firstOrFail($address->id);
+        }
+        
+        if($address->delete())
+        {
+            return response(null, 204);
+        }
+        else
+        {
+            throw new HttpException(403);
+        }
+    }
 }

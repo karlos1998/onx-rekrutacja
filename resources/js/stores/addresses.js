@@ -6,7 +6,8 @@ export const useAddressesStore = defineStore('addresses', {
 	state: () => {
 		return {
 			list: [],
-            loading:true
+            loading:true,
+			selected: [],
 		}
 	},
 	actions: {
@@ -22,6 +23,23 @@ export const useAddressesStore = defineStore('addresses', {
 
         push(d) {
             this.list.push(d)
-        }
+        },
+
+		deleteSelected(callback) {
+
+			const item = this.selected.shift()
+
+			if(!item) return callback(true)
+
+			api
+            .delete(`/address/${item.id}`)
+            .then((data) => {
+                this.deleteSelected(callback)
+            })
+			.catch(() => {
+				callback(false)
+			})
+		},
+
 	},
 })
