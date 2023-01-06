@@ -1,4 +1,13 @@
 <template>
+
+
+    <Details 
+    :show="showDetails"
+    :data="detailsData"
+    @visibleChanges="showDetails = $event"
+    ></Details>
+
+
     <div>
         <DataTable v-model:selection="addressesStore.selected" :value="addressesStore.list" :paginator="true" class="p-datatable-customers" :rows="10"
             dataKey="id" :rowHover="true" v-model:filters="filters" filterDisplay="menu" :loading="addressesStore.loading"
@@ -41,6 +50,12 @@
                 </template>
             </Column>
 
+            <Column field="details" header="Details" style="min-width: 14rem">
+                <template #body="{data}">
+                    <Button label="Details" @click="initDetails(data)"></Button>
+                </template>
+            </Column>
+
             <Column field="location" header="Location" style="min-width: 14rem">
                 <template #body="{data}">
                     <a target=_blank :href="'https://www.google.com/maps/search/?api=1&query='+data.location_latitude+','+data.location_longitude"><Button click="navigate" role="link" label="Location"></Button></a>
@@ -63,7 +78,14 @@
     v-if="addressesStore.selected.length > 0" 
     class="p-button-raised p-button-danger" >
         <span v-if="deleting">Deleting ...</span>
-        <span v-else>Delete selected ({{ addressesStore.selected.length }})</span>
+        <span v-else>Delete selected ({{ addressesStore.selected.length }}) one after the other</span>
+    </Button>
+    <Button 
+    @click.stop="deleteSelectedImmediately"
+    v-if="addressesStore.selected.length > 0" 
+    class="p-button-raised p-button-danger" >
+        <span v-if="deleting">Deleting ...</span>
+        <span v-else>Delete selected ({{ addressesStore.selected.length }}) immediately</span>
     </Button>
 
 </template>
@@ -85,6 +107,7 @@ import {useAddressesStore} from '@/stores/addresses'
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
+import Details from './Details.vue'
 
 export default {
     components: {
@@ -94,6 +117,7 @@ export default {
         Row,
         Button,
         InputText,
+        Details,
     },
 
     data() {
@@ -114,6 +138,9 @@ export default {
 
             selected: [],
             deleting: false,
+
+            showDetails:false,
+            detailsData:{},
         }
     },
     created() {
@@ -133,6 +160,16 @@ export default {
                 this.deleting = false
                 if(!success) this.$toast.add({severity:'error', summary:'Error', detail: 'There was a problem deleting addresses'});
             })
+        },
+
+        deleteSelectedImmediately() {
+            
+        },
+
+        initDetails(data) {
+            console.log(data)
+            this.showDetails = true
+            this.detailsData = data
         },
     },
 
