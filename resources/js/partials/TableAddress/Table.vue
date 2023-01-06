@@ -15,10 +15,10 @@
                 </div>
             </template>
             <template #empty>
-                No customers found.
+                No addesses found.
             </template>
             <template #loading>
-                Loading customers data. Please wait.
+                Loading addresses data. Please wait.
             </template>
 
 

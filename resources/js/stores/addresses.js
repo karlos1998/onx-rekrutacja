@@ -34,6 +34,8 @@ export const useAddressesStore = defineStore('addresses', {
 			api
             .delete(`/address/${item.id}`)
             .then((data) => {
+				const removeIndex = this.list.findIndex((obj) => obj.id == item.id)
+				if(removeIndex > -1) this.list.splice(removeIndex, 1)
                 this.deleteSelected(callback)
             })
 			.catch(() => {
