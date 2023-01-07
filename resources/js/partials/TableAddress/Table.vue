@@ -13,7 +13,7 @@
             dataKey="id" :rowHover="true" v-model:filters="filters" filterDisplay="menu" :loading="addressesStore.loading"
             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[10,25,50]"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            :globalFilterFields="['name','zip', 'user.email']" responsiveLayout="scroll">
+            :globalFilterFields="['name','zip', 'user.email', 'friendly_name']" responsiveLayout="scroll">
             <template #header>
                 <div class="flex justify-content-center align-items-center">
                     <h5 class="m-0">Address book </h5>
@@ -37,7 +37,7 @@
 
             <Column field="name" header="Name" sortable style="min-width: 14rem">
                 <template #body="{data}">
-                    {{data.name}}
+                    {{data.friendly_name || data.name}}
                 </template>
                 <!-- <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter" placeholder="Search by name"/>

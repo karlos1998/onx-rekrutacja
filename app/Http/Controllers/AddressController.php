@@ -117,4 +117,28 @@ class AddressController extends Controller
             throw new HttpException(403);
         }
     }
+    
+    public function update(Request $request, Address $address)
+    {
+
+        $post_data = $request->validate([
+            'friendly_name' =>  'string|nullable',
+        ]);
+
+        if(!$request->user()->hasPermission('all-addresses-update'))
+        {
+            $request->user()->firstOrFail($address->id);
+        }
+        
+        $address->friendly_name = $post_data['friendly_name'];
+
+        if($address->save())
+        {
+            return new AddressResource($address);
+        }
+        else
+        {
+            throw new HttpException(403);
+        }
+    }
 }
