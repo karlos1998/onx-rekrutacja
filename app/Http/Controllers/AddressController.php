@@ -14,6 +14,8 @@ class AddressController extends Controller
     public function store(Request $request)
     {
 
+        $this->authorize('create', Address::class);
+
         $post_data = $request->validate([
             'city' =>  'string',
             'cityDistricted' =>  'string|nullable',
@@ -52,30 +54,16 @@ class AddressController extends Controller
 
     public function index(Request $request)
     {
-
-        if($request->user()->hasPermission('all-addresses-read'))
-        {
-            $addresses = Address::all();
-        }
-        else if($request->user()->hasPermission('own-addresses-read'))
-        {
-            $addresses = $request->user()->addresses;
-        }
-        else
-        {
-            throw new HttpException(403, "You are not authorized to read any addresses");
-        }
+        $addresses = Address::all()->where(function (Address $address) use($request) {
+            return $request->user()->can('view', $address);
+        });
 
         return AddressResource::collection($addresses);
     }
 
     public function delete(Request $request, Address $address)
     {
-
-        if(!$request->user()->hasPermission('all-addresses-delete'))
-        {
-            $request->user()->firstOrFail($address->id);
-        }
+        $this->authorize('delete', $address);
         
         if($address->delete())
         {
@@ -101,7 +89,7 @@ class AddressController extends Controller
         }
         else if($request->user()->hasPermission('own-addresses-delete'))
         {
-            $addresses = $request->user()->whereIn('id', $ids);
+            $addresses = $request->user()->addresses()->whereIn('id', $ids);
         }
         else
         {
@@ -121,14 +109,11 @@ class AddressController extends Controller
     public function update(Request $request, Address $address)
     {
 
+        $this->authorize('update', $address);
+
         $post_data = $request->validate([
             'friendly_name' =>  'string|nullable',
         ]);
-
-        if(!$request->user()->hasPermission('all-addresses-update'))
-        {
-            $request->user()->firstOrFail($address->id);
-        }
         
         $address->friendly_name = $post_data['friendly_name'];
 
