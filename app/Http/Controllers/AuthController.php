@@ -21,7 +21,8 @@ use App\Http\Resources\UserResource;
 class AuthController extends Controller
 {
 
-    public function emailAvailable(Request $request){
+    public function emailAvailable(Request $request)
+    {
         $request->validate([
             'email'     =>  'required|string|email|unique:users',
         ]);
@@ -35,7 +36,8 @@ class AuthController extends Controller
         // }
     }
 
-    public function createAccount(Request $request){
+    public function createAccount(Request $request)
+    {
         $post_data = $request->validate([
             'firstname' =>  'required|string',
             'lastname'  =>  'required|string',
@@ -57,11 +59,19 @@ class AuthController extends Controller
         Auth::login($user);
 
         //return $user;
+
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ]);
         
     }
 
     
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         if (!\Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login details'
@@ -79,9 +89,18 @@ class AuthController extends Controller
         
     }
 
-    public function logout(Request $request) {
-        
-        var_dump($request->user()->currentAccessToken('authToken'));
+    public function logout(Request $request) 
+    {
+        return auth('web')->logout();
+        /*
+        Auth::logout();
+ 
+        $request->session()->invalidate();
+    
+        $request->session()->regenerateToken();
+        */
+
+        //var_dump($request->user()->currentAccessToken('authToken'));
         //return $request->bearerToken();
     }
 

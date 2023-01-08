@@ -101,9 +101,14 @@ export default {
             api
             .post("/user", this.signupStore.inputs)
             .then(async (response) => {
+
+                this.signupStore.indexValidator = {}
+                
                 console.log(response) 
                 this.signupStore.inputs = {}
 
+                await axios.get('/sanctum/csrf-cookie')
+                
                 const user = useUserStore()
                 await user.init()
                 if(user.logged) {

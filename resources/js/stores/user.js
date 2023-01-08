@@ -27,15 +27,15 @@ export const useUserStore = defineStore('user', {
 		},
 		logout(callback) {
 
-      axios.get('/sanctum/csrf-cookie')
-      .finally(() => {
-        api.post("/logout").then((response) => {
-          callback(true)
-        }).catch((err) => {
-          callback(false)
-        }).finally(
-          () => {});
-      })
+			api.post("/logout").then((response) => {
+				this.data = {}
+				this.logged = false
+				callback(true)
+			}).catch((err) => {
+				callback(false)
+			}).finally(
+				() => {}
+			);
 
 		}
 	},
