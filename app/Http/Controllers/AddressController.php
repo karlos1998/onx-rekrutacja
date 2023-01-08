@@ -9,6 +9,8 @@ use App\Http\Resources\AddressResource;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+use App\Events\NewAddress;
+
 class AddressController extends Controller
 {
     public function store(Request $request)
@@ -44,6 +46,7 @@ class AddressController extends Controller
 
         if($model->save())
         {
+            event(new NewAddress($model));
             return new AddressResource($model);
         }
         else

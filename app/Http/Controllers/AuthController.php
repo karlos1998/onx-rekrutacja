@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
-use Illuminate\Auth\Events\Registered;
-
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use Laravel\Sanctum\PersonalAccessToken;
@@ -53,8 +51,6 @@ class AuthController extends Controller
         ]);
 
         $user->attachRole('user');
-        
-        event(new Registered($user));
         
         Auth::login($user);
 
