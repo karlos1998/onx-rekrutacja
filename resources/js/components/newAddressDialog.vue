@@ -112,7 +112,11 @@ export default {
                             }
                         });  
                     })
-                    .catch((err) => console.log(err));
+                    .catch((err) => {
+                        console.log(err)
+                        this.filtered = []
+                        this.$toast.add({severity:'error', summary:'Placematik', detail: 'Failed to fetch addresses from API Placematic', life: 3000});
+                    });
                     
                 } else {
                     this.filtered = []
