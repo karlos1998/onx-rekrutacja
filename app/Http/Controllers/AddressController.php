@@ -66,6 +66,7 @@ class AddressController extends Controller
 
     public function delete(Request $request, Address $address)
     {
+        
         $this->authorize('delete', $address);
         
         if($address->delete())
