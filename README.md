@@ -94,3 +94,7 @@ Instalacja jest typowa dla aplikacji Laravel
     ```sh
     php artisan permission:update EMAIL_UZYTKOWNIKA
 
+
+## Dodatkowo
+W folderze `cypress` w katalogu `e2e` znajdziemy plik z testem.
+W głownym pliku projektu znajduje się również plik `CYPRESS-TEST.mov` pokazujący działanie testu (rejestracja, wylogowanie, ponowne zalogowanie, dodanie wielu adresów, edycja jednego, usunięcie adresów)

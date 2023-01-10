@@ -17,6 +17,7 @@
     "dependencies": {
         "@vitejs/plugin-vue": "^4.0.0",
         "cypress": "^12.3.0",
+        "faker": "^5.5.3",
         "pinia": "^2.0.28",
         "pinia-plugin-persistedstate": "^3.0.2",
         "primeflex": "^3.3.0",
